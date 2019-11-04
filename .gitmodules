@@ -1,0 +1,7 @@
+[submodule "3rd_party/fmt"]
+	path = 3rd_party/fmt
+	url = https://github.com/fmtlib/fmt
+[submodule "3rd_party/argparse"]
+	path = 3rd_party/argparse
+	url = https://github.com/p-ranav/argparse
+	branch = 272b19be
