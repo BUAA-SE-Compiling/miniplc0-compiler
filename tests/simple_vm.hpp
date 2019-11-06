@@ -9,7 +9,7 @@
 #include <climits>
 
 namespace miniplc0 {
-	// This is a simplified version virtual machine for testing.
+	// This is a simplified version of miniplc0 vm implementation for testing.
 	class VM {
 	private:
 		using uint64_t = std::uint64_t;
@@ -79,7 +79,7 @@ namespace miniplc0 {
 			int64_t r = (int64_t) lhs - (int64_t) rhs;
 			if (r < INT_MIN || r > INT_MAX)
 				throw std::out_of_range("subtraction out of range");
-			return lhs + rhs;
+			return lhs - rhs;
 		}
 
 		// See CSAPP Chapter.2
