@@ -51,6 +51,7 @@ namespace miniplc0 {
 		CompilationError(const CompilationError& ce) { _pos = ce._pos; _err = ce._err; }
 		CompilationError(CompilationError&& ce) :CompilationError(0, 0, ErrorCode::ErrNoError) { swap(*this, ce); }
 		CompilationError& operator=(CompilationError ce) { swap(*this, ce); return *this; }
+		bool operator==(const CompilationError& rhs) const { return _pos == rhs._pos && _err == rhs._err; }
 
 		std::pair<uint64_t, uint64_t> GetPos()const { return _pos; }
 		ErrorCode GetCode() const { return _err; }

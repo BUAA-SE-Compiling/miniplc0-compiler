@@ -44,6 +44,12 @@ namespace miniplc0 {
 		Token(const Token& t) { _type = t._type;  _value = t._value; _start_pos = t._start_pos; _end_pos = t._end_pos; }
 		Token(Token&& t) : Token(TokenType::NULL_TOKEN, nullptr, 0, 0, 0, 0) { swap(*this, t); }
 		Token& operator=(Token t) { swap(*this, t); return *this; }
+		bool operator==(const Token& rhs) const { 
+			return _type == rhs._type 
+				&& GetValueString() == rhs.GetValueString() 
+				&& _start_pos == rhs._start_pos 
+				&& _end_pos == rhs._end_pos; 
+		}
 
 		TokenType GetType() const { return _type; };
 		std::any GetValue() const { return _value; };
