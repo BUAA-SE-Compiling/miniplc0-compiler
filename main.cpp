@@ -105,5 +105,5 @@ int main(int argc, char** argv) {
 		fmt::print(stderr, "You must choose tokenization or syntactic analysis.");
 		exit(2);
 	}
-	exit(0);
+	return 0;
 }
