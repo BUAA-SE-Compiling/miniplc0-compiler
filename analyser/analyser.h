@@ -89,8 +89,8 @@ namespace miniplc0 {
 
 		// 为了简单处理，我们直接把符号表耦合在语法分析里
 		// 变量                   示例
-		// _uninitialized_vars    int a;
-		// _vars                  int a=1;
+		// _uninitialized_vars    var a;
+		// _vars                  var a=1;
 		// _consts                const a=1;
 		std::map<std::string, int32_t> _uninitialized_vars;
 		std::map<std::string, int32_t> _vars;
