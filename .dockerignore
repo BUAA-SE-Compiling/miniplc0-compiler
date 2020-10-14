@@ -1,0 +1,12 @@
+.vs
+CMakeSettings.json
+*.plc0
+CMake*.txt
+build
+CMakeFiles
+*.cmake
+**/Makefile
+
+
+!CMakeLists.txt
+!CMakeModules/*.cmake
