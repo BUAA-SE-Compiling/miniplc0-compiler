@@ -4,3 +4,5 @@ CMakeSettings.json
 *.txt
 !CMakeLists.txt
 build
+.clangd
+compile_commands.json

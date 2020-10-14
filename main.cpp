@@ -1,14 +1,11 @@
-#include "argparse/argparse.hpp"
-#include "fmt/core.h"
-
-#include "analyser/analyser.h"
-#include "fmts.hpp"
-#include "tokenizer/tokenizer.h"
-
-
 #include <fstream>
 #include <iostream>
 
+#include "analyser/analyser.h"
+#include "argparse/argparse.hpp"
+#include "fmt/core.h"
+#include "fmts.hpp"
+#include "tokenizer/tokenizer.h"
 
 std::vector<miniplc0::Token> _tokenize(std::istream &input) {
   miniplc0::Tokenizer tkz(input);
@@ -22,8 +19,7 @@ std::vector<miniplc0::Token> _tokenize(std::istream &input) {
 
 void Tokenize(std::istream &input, std::ostream &output) {
   auto v = _tokenize(input);
-  for (auto &it : v)
-    output << fmt::format("{}\n", it);
+  for (auto &it : v) output << fmt::format("{}\n", it);
   return;
 }
 
@@ -36,8 +32,7 @@ void Analyse(std::istream &input, std::ostream &output) {
     exit(2);
   }
   auto v = p.first;
-  for (auto &it : v)
-    output << fmt::format("{}\n", it);
+  for (auto &it : v) output << fmt::format("{}\n", it);
   return;
 }
 
@@ -57,7 +52,7 @@ int main(int argc, char **argv) {
     program.parse_args(argc, argv);
   } catch (const std::runtime_error &err) {
     fmt::print(stderr, "{}\n\n", err.what());
-    program.print_help();
+    std::cout << program;
     exit(2);
   }
 
