@@ -1,11 +1,10 @@
 #pragma once
 
-#include "error/error.h"
-
 #include <any>
 #include <cstdint>
 #include <string>
 
+#include "error/error.h"
 
 namespace miniplc0 {
 
@@ -29,18 +28,20 @@ enum TokenType {
 };
 
 class Token final {
-private:
+ private:
   using uint64_t = std::uint64_t;
   using int32_t = std::int32_t;
 
-public:
+ public:
   friend void swap(Token &lhs, Token &rhs);
 
-public:
+ public:
   Token(TokenType type, std::any value, uint64_t start_line,
         uint64_t start_column, uint64_t end_line, uint64_t end_column)
-      : _type(type), _value(std::move(value)),
-        _start_pos(start_line, start_column), _end_pos(end_line, end_column) {}
+      : _type(type),
+        _value(std::move(value)),
+        _start_pos(start_line, start_column),
+        _end_pos(end_line, end_column) {}
   Token(TokenType type, std::any value, std::pair<uint64_t, uint64_t> start,
         std::pair<uint64_t, uint64_t> end)
       : Token(type, value, start.first, start.second, end.first, end.second) {}
@@ -83,7 +84,7 @@ public:
     return "Invalid";
   }
 
-private:
+ private:
   TokenType _type;
   std::any _value;
   std::pair<uint64_t, uint64_t> _start_pos;
@@ -97,4 +98,4 @@ inline void swap(Token &lhs, Token &rhs) {
   swap(lhs._start_pos, rhs._start_pos);
   swap(lhs._end_pos, rhs._end_pos);
 }
-} // namespace miniplc0
+}  // namespace miniplc0

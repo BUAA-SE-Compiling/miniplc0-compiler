@@ -24,8 +24,7 @@ std::optional<CompilationError> Analyser::analyseProgram() {
 
   // <主过程>
   auto err = analyseMain();
-  if (err.has_value())
-    return err;
+  if (err.has_value()) return err;
 
   // 'end'
   auto ed = nextToken();
@@ -57,8 +56,7 @@ std::optional<CompilationError> Analyser::analyseConstantDeclaration() {
   while (true) {
     // 预读一个 token，不然不知道是否应该用 <常量声明> 推导
     auto next = nextToken();
-    if (!next.has_value())
-      return {};
+    if (!next.has_value()) return {};
     // 如果是 const 那么说明应该推导 <常量声明> 否则直接返回
     if (next.value().GetType() != TokenType::CONST) {
       unreadToken();
@@ -84,8 +82,7 @@ std::optional<CompilationError> Analyser::analyseConstantDeclaration() {
     // <常表达式>
     int32_t val;
     auto err = analyseConstantExpression(val);
-    if (err.has_value())
-      return err;
+    if (err.has_value()) return err;
 
     // ';'
     next = nextToken();
@@ -130,8 +127,7 @@ std::optional<CompilationError> Analyser::analyseStatementSequence() {
   while (true) {
     // 预读
     auto next = nextToken();
-    if (!next.has_value())
-      return {};
+    if (!next.has_value()) return {};
     unreadToken();
     if (next.value().GetType() != TokenType::IDENTIFIER &&
         next.value().GetType() != TokenType::PRINT &&
@@ -140,10 +136,10 @@ std::optional<CompilationError> Analyser::analyseStatementSequence() {
     }
     std::optional<CompilationError> err;
     switch (next.value().GetType()) {
-      // 这里需要你针对不同的预读结果来调用不同的子程序
-      // 注意我们没有针对空语句单独声明一个函数，因此可以直接在这里返回
-    default:
-      break;
+        // 这里需要你针对不同的预读结果来调用不同的子程序
+        // 注意我们没有针对空语句单独声明一个函数，因此可以直接在这里返回
+      default:
+        break;
     }
   }
   return {};
@@ -151,8 +147,8 @@ std::optional<CompilationError> Analyser::analyseStatementSequence() {
 
 // <常表达式> ::= [<符号>]<无符号整数>
 // 需要补全
-std::optional<CompilationError>
-Analyser::analyseConstantExpression(int32_t &out) {
+std::optional<CompilationError> Analyser::analyseConstantExpression(
+    int32_t &out) {
   // out 是常表达式的结果
   // 这里你要分析常表达式并且计算结果
   // 注意以下均为常表达式
@@ -165,15 +161,13 @@ Analyser::analyseConstantExpression(int32_t &out) {
 std::optional<CompilationError> Analyser::analyseExpression() {
   // <项>
   auto err = analyseItem();
-  if (err.has_value())
-    return err;
+  if (err.has_value()) return err;
 
   // {<加法型运算符><项>}
   while (true) {
     // 预读
     auto next = nextToken();
-    if (!next.has_value())
-      return {};
+    if (!next.has_value()) return {};
     auto type = next.value().GetType();
     if (type != TokenType::PLUS_SIGN && type != TokenType::MINUS_SIGN) {
       unreadToken();
@@ -182,8 +176,7 @@ std::optional<CompilationError> Analyser::analyseExpression() {
 
     // <项>
     err = analyseItem();
-    if (err.has_value())
-      return err;
+    if (err.has_value()) return err;
 
     // 根据结果生成指令
     if (type == TokenType::PLUS_SIGN)
@@ -217,8 +210,7 @@ std::optional<CompilationError> Analyser::analyseOutputStatement() {
 
   // <表达式>
   auto err = analyseExpression();
-  if (err.has_value())
-    return err;
+  if (err.has_value()) return err;
 
   // ')'
   next = nextToken();
@@ -267,22 +259,20 @@ std::optional<CompilationError> Analyser::analyseFactor() {
     return std::make_optional<CompilationError>(
         _current_pos, ErrorCode::ErrIncompleteExpression);
   switch (next.value().GetType()) {
-    // 这里和 <语句序列> 类似，需要根据预读结果调用不同的子程序
-    // 但是要注意 default 返回的是一个编译错误
-  default:
-    return std::make_optional<CompilationError>(
-        _current_pos, ErrorCode::ErrIncompleteExpression);
+      // 这里和 <语句序列> 类似，需要根据预读结果调用不同的子程序
+      // 但是要注意 default 返回的是一个编译错误
+    default:
+      return std::make_optional<CompilationError>(
+          _current_pos, ErrorCode::ErrIncompleteExpression);
   }
 
   // 取负
-  if (prefix == -1)
-    _instructions.emplace_back(Operation::SUB, 0);
+  if (prefix == -1) _instructions.emplace_back(Operation::SUB, 0);
   return {};
 }
 
 std::optional<Token> Analyser::nextToken() {
-  if (_offset == _tokens.size())
-    return {};
+  if (_offset == _tokens.size()) return {};
   // 考虑到 _tokens[0..._offset-1] 已经被分析过了
   // 所以我们选择 _tokens[0..._offset-1] 的 EndPos 作为当前位置
   _current_pos = _tokens[_offset].GetEndPos();
@@ -290,8 +280,7 @@ std::optional<Token> Analyser::nextToken() {
 }
 
 void Analyser::unreadToken() {
-  if (_offset == 0)
-    DieAndPrint("analyser unreads token from the begining.");
+  if (_offset == 0) DieAndPrint("analyser unreads token from the begining.");
   _current_pos = _tokens[_offset - 1].GetEndPos();
   _offset--;
 }
@@ -335,4 +324,4 @@ bool Analyser::isInitializedVariable(const std::string &s) {
 bool Analyser::isConstant(const std::string &s) {
   return _consts.find(s) != _consts.end();
 }
-} // namespace miniplc0
+}  // namespace miniplc0

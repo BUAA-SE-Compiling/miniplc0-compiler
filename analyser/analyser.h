@@ -1,29 +1,35 @@
 #pragma once
 
-#include "error/error.h"
-#include "instruction/instruction.h"
-#include "tokenizer/token.h"
-
-#include <cstddef> // for std::size_t
+#include <cstddef>  // for std::size_t
 #include <cstdint>
 #include <map>
 #include <optional>
 #include <utility>
 #include <vector>
 
+#include "error/error.h"
+#include "instruction/instruction.h"
+#include "tokenizer/token.h"
+
+
 namespace miniplc0 {
 
 class Analyser final {
-private:
+ private:
   using uint64_t = std::uint64_t;
   using int64_t = std::int64_t;
   using uint32_t = std::uint32_t;
   using int32_t = std::int32_t;
 
-public:
+ public:
   Analyser(std::vector<Token> v)
-      : _tokens(std::move(v)), _offset(0), _instructions({}),
-        _current_pos(0, 0), _uninitialized_vars({}), _vars({}), _consts({}),
+      : _tokens(std::move(v)),
+        _offset(0),
+        _instructions({}),
+        _current_pos(0, 0),
+        _uninitialized_vars({}),
+        _vars({}),
+        _consts({}),
         _nextTokenIndex(0) {}
   Analyser(Analyser &&) = delete;
   Analyser(const Analyser &) = delete;
@@ -33,7 +39,7 @@ public:
   std::pair<std::vector<Instruction>, std::optional<CompilationError>>
   Analyse();
 
-private:
+ private:
   // 所有的递归子程序
 
   // <程序>
@@ -86,7 +92,7 @@ private:
   // 获得 {变量，常量} 在栈上的偏移
   int32_t getIndex(const std::string &);
 
-private:
+ private:
   std::vector<Token> _tokens;
   std::size_t _offset;
   std::vector<Instruction> _instructions;
@@ -103,4 +109,4 @@ private:
   // 下一个 token 在栈的偏移
   int32_t _nextTokenIndex;
 };
-} // namespace miniplc0
+}  // namespace miniplc0

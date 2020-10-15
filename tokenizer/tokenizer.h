@@ -1,10 +1,5 @@
 #pragma once
 
-#include "error/error.h"
-#include "tokenizer/token.h"
-#include "tokenizer/utils.hpp"
-
-
 #include <cstdint>
 #include <iostream>
 #include <memory>
@@ -13,11 +8,14 @@
 #include <utility>
 #include <vector>
 
+#include "error/error.h"
+#include "tokenizer/token.h"
+#include "tokenizer/utils.hpp"
 
 namespace miniplc0 {
 
 class Tokenizer final {
-private:
+ private:
   using uint64_t = std::uint64_t;
 
   // 状态机的所有状态
@@ -35,7 +33,7 @@ private:
     RIGHTBRACKET_STATE
   };
 
-public:
+ public:
   Tokenizer(std::istream &ifs)
       : _rdr(ifs), _initialized(false), _ptr(0, 0), _lines_buffer() {}
   Tokenizer(Tokenizer &&tkz) = delete;
@@ -47,7 +45,7 @@ public:
   // 一次返回所有 token
   std::pair<std::vector<Token>, std::optional<CompilationError>> AllTokens();
 
-private:
+ private:
   // 检查 Token 的合法性
   std::optional<CompilationError> checkToken(const Token &);
   //
@@ -84,7 +82,7 @@ private:
   bool isEOF();
   void unreadLast();
 
-private:
+ private:
   std::istream &_rdr;
   // 如果没有初始化，那么就 readAll
   bool _initialized;
@@ -93,4 +91,4 @@ private:
   // 以行为基础的缓冲区
   std::vector<std::string> _lines_buffer;
 };
-} // namespace miniplc0
+}  // namespace miniplc0

@@ -8,13 +8,13 @@ namespace miniplc0 {
 enum Operation { ILL = 0, LIT, LOD, STO, ADD, SUB, MUL, DIV, WRT };
 
 class Instruction final {
-private:
+ private:
   using int32_t = std::int32_t;
 
-public:
+ public:
   friend void swap(Instruction &lhs, Instruction &rhs);
 
-public:
+ public:
   Instruction(Operation opr, int32_t x) : _opr(opr), _x(x) {}
 
   Instruction() : Instruction(Operation::ILL, 0) {}
@@ -34,7 +34,7 @@ public:
   Operation GetOperation() const { return _opr; }
   int32_t GetX() const { return _x; }
 
-private:
+ private:
   Operation _opr;
   int32_t _x;
 };
@@ -44,4 +44,4 @@ inline void swap(Instruction &lhs, Instruction &rhs) {
   swap(lhs._opr, rhs._opr);
   swap(lhs._x, rhs._x);
 }
-} // namespace miniplc0
+}  // namespace miniplc0
