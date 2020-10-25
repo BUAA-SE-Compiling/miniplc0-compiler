@@ -106,14 +106,28 @@ std::optional<CompilationError> Analyser::analyseVariableDeclaration() {
   // 'var'
 
   // <标识符>
+  auto ident =
+      /*标识符的 token*/ Token(TokenType::NULL_TOKEN, nullptr, 0, 0, 0, 0);
 
   // 变量可能没有初始化，仍然需要一次预读
+  bool initialized = /*填写*/ false;
 
   // '='
 
   // '<表达式>'
 
   // ';'
+
+  // 把变量加入符号表
+  if (initialized) {
+    addVariable(ident);
+    // 已经初始化的变量的值的位置正好是之前表达式计算结果，所以不做处理
+  } else {
+    addUninitializedVariable(ident);
+    // 加载一个任意的初始值
+    _instructions.emplace_back(Operation::LIT, 0);
+  }
+
   return {};
 }
 
@@ -149,7 +163,7 @@ std::optional<CompilationError> Analyser::analyseStatementSequence() {
 // 需要补全
 std::optional<CompilationError> Analyser::analyseConstantExpression(
     int32_t &out) {
-  // out 是常表达式的结果
+  // out 是常表达式的结果，算出结果给 out 赋值就行
   // 这里你要分析常表达式并且计算结果
   // 注意以下均为常表达式
   // +1 -1 1
@@ -194,6 +208,22 @@ std::optional<CompilationError> Analyser::analyseAssignmentStatement() {
   // 标识符声明过吗？
   // 标识符是常量吗？
   // 需要生成指令吗？
+
+  auto ident =
+      /*标识符的 token*/ Token(TokenType::NULL_TOKEN, nullptr, 0, 0, 0, 0);
+  auto name = ident.GetValueString();
+  // 未定义
+  if (isDeclared(name)) {
+    return {CompilationError(_current_pos, ErrorCode::ErrNotDeclared)};
+  }
+  // 是常量
+  if (isConstant(name)) {
+    return {CompilationError(_current_pos, ErrorCode::ErrAssignToConstant)};
+  }
+  // 存储这个标识符
+  auto index = getIndex(name);
+  _instructions.emplace_back(Operation::STO, index);
+  makeInitialized(name);
   return {};
 }
 
@@ -233,7 +263,23 @@ std::optional<CompilationError> Analyser::analyseOutputStatement() {
 // 需要补全
 std::optional<CompilationError> Analyser::analyseItem() {
   // 可以参考 <表达式> 实现
-  return {};
+
+  // <因子>
+
+  // { <乘法型运算符><因子> }
+  while (true) {
+    // 预读
+
+    auto type = TokenType::NULL_TOKEN;
+
+    // <因子>
+
+    // 根据结果生成指令
+    if (type == TokenType::MULTIPLICATION_SIGN)
+      _instructions.emplace_back(Operation::MUL, 0);
+    else if (type == TokenType::DIVISION_SIGN)
+      _instructions.emplace_back(Operation::DIV, 0);
+  }
 }
 
 // <因子> ::= [<符号>]( <标识符> | <无符号整数> | '('<表达式>')' )
@@ -259,8 +305,23 @@ std::optional<CompilationError> Analyser::analyseFactor() {
     return std::make_optional<CompilationError>(
         _current_pos, ErrorCode::ErrIncompleteExpression);
   switch (next.value().GetType()) {
-      // 这里和 <语句序列> 类似，需要根据预读结果调用不同的子程序
-      // 但是要注意 default 返回的是一个编译错误
+    // 这里和 <语句序列> 类似，需要根据预读结果调用不同的子程序
+    // 但是要注意 default 返回的是一个编译错误
+
+    // 备用代码：
+    //
+    // - 加载变量
+    // auto ident = /* 变量名 */;
+    // if (!isDeclared(ident))
+    //   return {CompilationError(_current_pos, ErrorCode::ErrNotDeclared)};
+    // if (!isInitializedVariable(ident) && !isConstant(ident))
+    //   return {CompilationError(_current_pos,
+    //   ErrorCode::ErrNotInitialized)};
+    // _instructions.emplace_back(Operation::LOD, getIndex(ident));
+    //
+    // - 加载常数
+    // int32_t val = /* 值 */;
+    // _instructions.emplace_back(Operation::LIT, val);
     default:
       return std::make_optional<CompilationError>(
           _current_pos, ErrorCode::ErrIncompleteExpression);
@@ -298,6 +359,14 @@ void Analyser::addConstant(const Token &tk) { _add(tk, _consts); }
 
 void Analyser::addUninitializedVariable(const Token &tk) {
   _add(tk, _uninitialized_vars);
+}
+
+void Analyser::makeInitialized(const std::string &var_name) {
+  auto var = _uninitialized_vars.find(var_name);
+  if (var == _uninitialized_vars.end())
+    DieAndPrint("Variable not found in uninitialized area. bad bad");
+  auto item = _uninitialized_vars.extract(var);
+  _vars.insert(std::move(item));
 }
 
 int32_t Analyser::getIndex(const std::string &s) {
