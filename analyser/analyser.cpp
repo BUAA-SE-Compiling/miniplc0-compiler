@@ -213,7 +213,7 @@ std::optional<CompilationError> Analyser::analyseAssignmentStatement() {
       /*标识符的 token*/ Token(TokenType::NULL_TOKEN, nullptr, 0, 0, 0, 0);
   auto name = ident.GetValueString();
   // 未定义
-  if (isDeclared(name)) {
+  if (!isDeclared(name)) {
     return {CompilationError(_current_pos, ErrorCode::ErrNotDeclared)};
   }
   // 是常量
@@ -223,7 +223,7 @@ std::optional<CompilationError> Analyser::analyseAssignmentStatement() {
   // 存储这个标识符
   auto index = getIndex(name);
   _instructions.emplace_back(Operation::STO, index);
-  makeInitialized(name);
+  if (!isInitializedVariable(name)) makeInitialized(next.value());
   return {};
 }
 
